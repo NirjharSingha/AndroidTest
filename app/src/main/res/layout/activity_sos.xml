@@ -107,12 +107,19 @@
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="sendMessageAndCall"
+        android:onClick="saveData"
         android:text="Save"
         android:backgroundTint="#FA3E63"
         android:layout_marginTop="16dp" />
     <!--        android:onClick="sendMessageAndCall"-->
 
+    <Button
+        android:id="@+id/toggleServiceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FA3E63"
+        android:layout_marginTop="16dp"
+        android:onClick="toggleShakeService" />
 
 
 </LinearLayout>

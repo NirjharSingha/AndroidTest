@@ -48,39 +48,11 @@ public class Splashscreen extends AppCompatActivity {
             @Override
             public void run() {
 
-
                 Intent onBoardingIntent = new Intent(getApplicationContext(), Onboarding.class);
                 startActivity(onBoardingIntent);
                 Onboarding=getSharedPreferences("Onboarding",MODE_PRIVATE);
                 finish();
-//                boolean isFirstTime = Onboarding.getBoolean("firsttime",true);
-//                if(isFirstTime){
-//                    SharedPreferences.Editor editor=Onboarding.edit();
-//                    editor.putBoolean("firsttime",false);
-//                    editor.commit();
-//
-//                     homeIntent = new Intent(getApplicationContext(), Onboarding.class);
-//                }
-//                else{
-//                     homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-//                }
-//                homeIntent = new Intent(getApplicationContext(), Onboarding.class);
-////                startActivity(intent);
-////                finish();
-//                SharedPreferences sharedPreferences =  getSharedPreferences(Login.Auth_Pref, 0);
-//                //Pair pair1=new Pair<View,String>(blink,"logoimg");
-//                //Pair pair2=new Pair<View,String>(greet2,"logotxt");
-//                boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-//
-//                ActivityOptions options=ActivityOptions.makeSceneTransitionAnimation(Splashscreen.this, android.util.Pair.create(lottiesplash,"logoimg"),android.util.Pair.create(greet2,"logotxt"));
-//
-//                if(!isLoggedIn) {
-//                    startActivity(loginIntent, options.toBundle());
-//                }else {
-//                    startActivity(homeIntent, options.toBundle());
-//                }
-//                finish();
-                //blink.setVisibility(View.VISIBLE);
+
             }
         },3000);
     }
