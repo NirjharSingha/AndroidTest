@@ -134,6 +134,10 @@ public class Sos extends AppCompatActivity {
                     new String[]{Manifest.permission.SEND_SMS, Manifest.permission.CALL_PHONE},
                     PERMISSION_REQUEST_CODE);
         }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_CODE);
+        }
     }
 
     public void saveData(View view) {

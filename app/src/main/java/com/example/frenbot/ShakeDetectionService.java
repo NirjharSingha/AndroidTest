@@ -1,15 +1,20 @@
 package com.example.frenbot;
 
+import android.app.LocaleManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -17,6 +22,7 @@ import android.telephony.SmsManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,12 +43,16 @@ public class ShakeDetectionService extends Service implements SensorEventListene
     private boolean isNotFirstTime = false;
     private float shakeThreshold = 30f;
 
+    private LocationManager locationManager;
+    private static String longitude = "", latitude = "";
+
     @Override
     public void onCreate() {
         super.onCreate();
         // Initialize and configure the sensor manager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         // Register the sensor listener
         if (accelerometerSensor != null) {
@@ -50,6 +60,17 @@ public class ShakeDetectionService extends Service implements SensorEventListene
         }
 
         startForeground(1, createNotification());
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                ShakeDetectionService.longitude = String.valueOf(location.getLongitude());
+                ShakeDetectionService.latitude = String.valueOf(location.getLatitude());
+            }
+        });
     }
 
     @Override
@@ -155,6 +176,14 @@ public class ShakeDetectionService extends Service implements SensorEventListene
     private void sendSms(String phoneNumber, String message) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
+
+            if(ShakeDetectionService.longitude != null && ShakeDetectionService.latitude != null) {
+                String mapLink = "http://maps.google.com/maps?q=" + ShakeDetectionService.latitude  + "," + ShakeDetectionService.longitude;
+                message = message + "\n" + mapLink;
+            } else {
+                Toast.makeText(this, "null location", Toast.LENGTH_SHORT).show();
+            }
+
             ArrayList<String> parts = smsManager.divideMessage(message);
             smsManager.sendMultipartTextMessage(phoneNumber, null, parts, null, null);
             Toast.makeText(this, "Message sent successfully", Toast.LENGTH_SHORT).show();
