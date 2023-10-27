@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class add_course extends AppCompatActivity {
     TextInputEditText courseName, courseID, instructor, desc;
@@ -42,6 +44,13 @@ public class add_course extends AppCompatActivity {
         courseID = findViewById(R.id.course_id);
         desc = findViewById(R.id.Description);
         instructor = findViewById(R.id.instructor);
+        ImageView back=findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         add = findViewById(R.id.add);
 
@@ -74,9 +83,10 @@ public class add_course extends AppCompatActivity {
                     String userId = user.getUid();
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    CollectionReference courseCollection = db.collection("Course");
+                    DocumentReference userDocument = db.collection("Users").document(userId);
+                    CollectionReference coursesCollection = userDocument.collection("Course");
 
-                    DocumentReference courseDocument = courseCollection.document(userId);
+                    String courseId = UUID.randomUUID().toString();
 
                     Map<String, Object> course = new HashMap<>();
                     course.put("title",title);
@@ -84,7 +94,8 @@ public class add_course extends AppCompatActivity {
                     course.put("instructor",instruct);
                     course.put("id",id);
 
-                    courseDocument.set(course)
+                    coursesCollection.document(courseId)
+                            .set(course)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
